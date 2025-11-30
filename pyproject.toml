@@ -1,0 +1,5 @@
+[project]
+name = "PySide Project"
+
+[tool.pyside6-project]
+files = [".gitignore", "config.py", "database/__init__.py", "main.py"]
