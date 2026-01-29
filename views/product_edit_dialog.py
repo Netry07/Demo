@@ -1,6 +1,5 @@
 """products_edit_dialog"""
 import os
-import shutil
 from PyQt6.QtWidgets import (
     QDialog,
     QVBoxLayout,

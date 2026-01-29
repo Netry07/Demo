@@ -10,7 +10,6 @@ from PyQt6.QtWidgets import (
     QDateEdit,
     QMessageBox,
     QFormLayout,
-    QGroupBox,
 )
 from PyQt6.QtCore import Qt, QDate
 from database.queries import OrderQueries, UserQueries

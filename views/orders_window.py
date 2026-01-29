@@ -1,5 +1,4 @@
 """orders_window"""
-import os
 
 from PyQt6.QtWidgets import (
     QDialog,  # Изменено с QMainWindow на QDialog
@@ -7,9 +6,7 @@ from PyQt6.QtWidgets import (
     QVBoxLayout,
     QHBoxLayout,
     QLabel,
-    QLineEdit,
     QPushButton,
-    QComboBox,
     QMessageBox,
     QScrollArea,
     QFrame,
