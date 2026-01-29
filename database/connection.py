@@ -5,7 +5,6 @@ from config import DB_CONFIG
 
 class DatabaseConnection:
     """Класс для управления подключением к базе данных PostgreSQL"""
-
     _instance = None
     _connection = None
 
@@ -49,7 +48,7 @@ class DatabaseConnection:
             fetch: Возвращать ли результат (True для SELECT)
 
         Returns:
-            Результат запроса или None
+            Результат запроса или количество затронутых строк
         """
         try:
             conn = self.connect()
@@ -72,6 +71,7 @@ class DatabaseConnection:
     def execute_one(self, query, params=None):
         """
         Выполнить запрос и вернуть одну строку
+        Автоматически делает commit для INSERT/UPDATE с RETURNING
 
         Args:
             query: SQL запрос
@@ -84,8 +84,17 @@ class DatabaseConnection:
             conn = self.connect()
             with conn.cursor() as cursor:
                 cursor.execute(query, params)
-                return cursor.fetchone()
+                result = cursor.fetchone()
+
+                # Если это INSERT/UPDATE/DELETE - делаем commit
+                if query.strip().upper().startswith(('INSERT', 'UPDATE', 'DELETE')):
+                    conn.commit()
+
+                return result
+
         except Exception as e:
+            if self._connection:
+                self._connection.rollback()
             print(f"Ошибка выполнения запроса: {e}")
             raise
 

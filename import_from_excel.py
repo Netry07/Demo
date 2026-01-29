@@ -41,8 +41,8 @@ def import_pickup_points(file_path):
             if address and address.strip() and 'г.' in address:
                 try:
                     cursor.execute(
-                        "INSERT INTO pickup_points (full_address) VALUES (%s) ON CONFLICT DO NOTHING",
-                        (address.strip(),)
+                        "INSERT INTO pickup_points (id, full_address) VALUES (%s, %s) ON CONFLICT DO NOTHING",
+                        (count,address.strip())
                     )
                     count += 1
                 except Exception as e:
@@ -219,6 +219,14 @@ def import_orders(file_path):
         for index, row in df.iterrows():
             try:
                 order_number = int(row.iloc[0]) if pd.notna(row.iloc[0]) else None
+                article = str(row.iloc[1]) if pd.notna(row.iloc[1]) else ''
+                
+                # Проверка обязательного поля артикул
+                if not article:
+                    print(f"  Пропуск строки {index + 2}: отсутствует артикул")
+                    errors += 1
+                    continue
+                
                 order_date = parse_date(row.iloc[2])
                 delivery_date = parse_date(row.iloc[3])
 
@@ -263,10 +271,10 @@ def import_orders(file_path):
                 cursor.execute(
                     """
                     INSERT INTO "order"
-                    (user_id, pick_up_id, created_at, delivered_at, full_name, recipient_code, status)
-                    VALUES (%s, %s, %s, %s, %s, %s, %s)
+                    (id, article, user_id, pick_up_id, created_at, delivered_at, full_name, recipient_code, status)
+                    VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)
                     """,
-                    (user_id, pickup_point_id, order_date, delivery_date, client_name, receive_code, status)
+                    (order_number, article, user_id, pickup_point_id, order_date, delivery_date, client_name, receive_code, status)
                 )
                 conn.commit()  # Коммитим каждый заказ отдельно
                 count += 1
@@ -286,6 +294,7 @@ def import_orders(file_path):
 
     except Exception as e:
         print(f"Ошибка импорта заказов: {e}")
+
 
 
 def main():

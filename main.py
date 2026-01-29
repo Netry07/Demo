@@ -17,11 +17,6 @@ def main():
         pass
 
     # Применение глобальных стилей
-    try:
-        with open('resources/styles.qss', 'r', encoding='utf-8') as f:
-            app.setStyleSheet(f.read())
-    except Exception as e:
-        print(f'Не удалось загрузить стили: {e}')
 
     # Проверка подключения к базе данных
     try:

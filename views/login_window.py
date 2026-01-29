@@ -1,6 +1,14 @@
-from PyQt6.QtWidgets import (QWidget, QVBoxLayout, QHBoxLayout, QLabel,
-                             QLineEdit, QPushButton, QMessageBox)
-from PyQt6.QtCore import Qt, pyqtSignal
+"""login_window"""
+from PyQt6.QtWidgets import (
+    QWidget,
+    QVBoxLayout,
+    QHBoxLayout,
+    QLabel,
+    QLineEdit,
+    QPushButton,
+    QMessageBox,
+)
+from PyQt6.QtCore import Qt
 from PyQt6.QtGui import QPixmap, QIcon
 from database.queries import UserQueries
 from views.products_window import ProductsWindow
@@ -16,41 +24,48 @@ class LoginWindow(QWidget):
 
     def init_ui(self):
         """Инициализация интерфейса"""
-        self.setWindowTitle('Авторизация - Магазин обуви')
-        self.setFixedSize(400, 500)
-        self.setWindowIcon(QIcon('resources/images/icon.ico'))
+        self.setWindowTitle("Авторизация - Магазин обуви")
+        self.setFixedSize(400, 550)
+        self.setWindowIcon(QIcon("resources/images/icon.ico"))
 
         # Основной layout
         main_layout = QVBoxLayout()
         main_layout.setAlignment(Qt.AlignmentFlag.AlignCenter)
 
-        # Логотип
+        # ЛОГОТИП КОМПАНИИ (НАД "ВХОД В СИСТЕМУ")
         logo_label = QLabel()
         try:
-            pixmap = QPixmap('resources/images/logo.png')
+            pixmap = QPixmap("resources/images/icon.ico")
             if not pixmap.isNull():
-                scaled_pixmap = pixmap.scaled(200, 200, Qt.AspectRatioMode.KeepAspectRatio,
-                                              Qt.TransformationMode.SmoothTransformation)
+                scaled_pixmap = pixmap.scaled(
+                    150, 150,
+                    Qt.AspectRatioMode.KeepAspectRatio,
+                    Qt.TransformationMode.SmoothTransformation,
+                )
                 logo_label.setPixmap(scaled_pixmap)
                 logo_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
         except:
-            logo_label.setText('🏪 Магазин обуви')
-            logo_label.setStyleSheet('font-size: 24px; font-weight: bold;')
+            logo_label.setText("🏪")
+            logo_label.setStyleSheet("font-size: 48px;")
 
         main_layout.addWidget(logo_label)
-        main_layout.addSpacing(30)
+        main_layout.addSpacing(20)
 
         # Заголовок
-        title_label = QLabel('Вход в систему')
-        title_label.setStyleSheet('font-size: 18px; font-weight: bold;')
+        title_label = QLabel("Вход в систему")
+        title_label.setStyleSheet(
+            "font-family: Times New Roman; font-size: 18px; font-weight: bold;"
+        )
         title_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
         main_layout.addWidget(title_label)
         main_layout.addSpacing(20)
 
         # Поле логина
-        login_label = QLabel('Логин:')
+        login_label = QLabel("Логин:")
+        login_label.setStyleSheet("font-family: Times New Roman; font-size: 14px;")
         self.login_input = QLineEdit()
-        self.login_input.setPlaceholderText('Введите логин')
+        self.login_input.setPlaceholderText("Введите логин")
+        self.login_input.setStyleSheet("font-family: Times New Roman; font-size: 14px;")
         self.login_input.setMinimumHeight(35)
 
         main_layout.addWidget(login_label)
@@ -58,9 +73,11 @@ class LoginWindow(QWidget):
         main_layout.addSpacing(10)
 
         # Поле пароля
-        password_label = QLabel('Пароль:')
+        password_label = QLabel("Пароль:")
+        password_label.setStyleSheet("font-family: Times New Roman; font-size: 14px;")
         self.password_input = QLineEdit()
-        self.password_input.setPlaceholderText('Введите пароль')
+        self.password_input.setPlaceholderText("Введите пароль")
+        self.password_input.setStyleSheet("font-family: Times New Roman; font-size: 14px;")
         self.password_input.setEchoMode(QLineEdit.EchoMode.Password)
         self.password_input.setMinimumHeight(35)
         self.password_input.returnPressed.connect(self.login)
@@ -70,39 +87,40 @@ class LoginWindow(QWidget):
         main_layout.addSpacing(20)
 
         # Кнопка входа
-        self.login_button = QPushButton('Войти')
+        self.login_button = QPushButton("Войти")
         self.login_button.setMinimumHeight(40)
-        self.login_button.setStyleSheet('''
+        self.login_button.setStyleSheet(
+            """
             QPushButton {
-                background-color: #4CAF50;
-                color: white;
+                background-color: #00FA9A;
+                color: black;
+                font-family: Times New Roman;
                 font-size: 14px;
-                font-weight: bold;
                 border-radius: 5px;
             }
-            QPushButton:hover {
-                background-color: #45a049;
-            }
-        ''')
+        """
+        )
+        self.login_button.setCursor(Qt.CursorShape.PointingHandCursor)
         self.login_button.clicked.connect(self.login)
         main_layout.addWidget(self.login_button)
 
         main_layout.addSpacing(10)
 
         # Кнопка гостя
-        self.guest_button = QPushButton('Войти как гость')
+        self.guest_button = QPushButton("Войти как гость")
         self.guest_button.setMinimumHeight(40)
-        self.guest_button.setStyleSheet('''
+        self.guest_button.setStyleSheet(
+            """
             QPushButton {
-                background-color: #2196F3;
-                color: white;
+                background-color: #00FA9A;
+                color: black;
+                font-family: Times New Roman;
                 font-size: 14px;
                 border-radius: 5px;
             }
-            QPushButton:hover {
-                background-color: #0b7dda;
-            }
-        ''')
+        """
+        )
+        self.guest_button.setCursor(Qt.CursorShape.PointingHandCursor)
         self.guest_button.clicked.connect(self.login_as_guest)
         main_layout.addWidget(self.guest_button)
 
@@ -118,17 +136,22 @@ class LoginWindow(QWidget):
         y = (screen.height() - self.height()) // 2
         self.move(x, y)
 
+    def show_error(self, title, message):
+        """Показать ошибку с КРАСНОЙ иконкой"""
+        msg = QMessageBox(self)
+        msg.setIcon(QMessageBox.Icon.Critical)  # КРАСНАЯ иконка
+        msg.setWindowTitle(title)
+        msg.setText(message)
+        msg.setStandardButtons(QMessageBox.StandardButton.Ok)
+        msg.exec()
+
     def login(self):
         """Обработка входа в систему"""
         login = self.login_input.text().strip()
         password = self.password_input.text().strip()
 
         if not login or not password:
-            QMessageBox.warning(
-                self,
-                'Ошибка',
-                'Пожалуйста, заполните все поля!'
-            )
+            self.show_error("Ошибка", "Пожалуйста, заполните все поля!")
             return
 
         try:
@@ -138,27 +161,19 @@ class LoginWindow(QWidget):
                 self.current_user = user
                 self.open_products_window()
             else:
-                QMessageBox.warning(
-                    self,
-                    'Ошибка авторизации',
-                    'Неверный логин или пароль!'
-                )
+                self.show_error("Ошибка авторизации", "Неверный логин или пароль!")
                 self.password_input.clear()
 
         except Exception as e:
-            QMessageBox.critical(
-                self,
-                'Ошибка',
-                f'Ошибка подключения к базе данных:\n{str(e)}'
-            )
+            self.show_error("Ошибка", f"Ошибка подключения к базе данных:\n{str(e)}")
 
     def login_as_guest(self):
         """Вход как гость"""
         self.current_user = {
-            'user_id': None,
-            'full_name': 'Гость',
-            'login': 'guest',
-            'role_name': 'Гость'
+            "user_id": None,
+            "full_name": "Гость",
+            "login": "guest",
+            "role_name": "Гость",
         }
         self.open_products_window()
 

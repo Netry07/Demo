@@ -1,4 +1,8 @@
+"""queries"""
+
 from database.connection import db
+import random
+import string
 
 
 class UserQueries:
@@ -25,6 +29,24 @@ class UserQueries:
 
 
 class ProductQueries:
+
+    @staticmethod
+    def generate_unique_article():
+        """Генерация уникального артикула для товара"""
+        while True:
+            # Генерируем артикул формата: A123B4 (буква, 3 цифры, буква, цифра)
+            part1 = random.choice(string.ascii_uppercase)
+            part2 = ''.join(random.choices(string.digits, k=3))
+            part3 = random.choice(string.ascii_uppercase)
+            part4 = random.choice(string.digits)
+            article = f"{part1}{part2}{part3}{part4}"
+
+            # Проверяем уникальность
+            check_query = "SELECT COUNT(*) as count FROM products WHERE article = %s"
+            result = db.execute_one(check_query, (article,))
+
+            if result and result['count'] == 0:
+                return article
 
     @staticmethod
     def get_all_products():
@@ -125,6 +147,9 @@ class ProductQueries:
     def add_product(article, name, unit, price, supplier, category,
                    discount, quantity, description, photo_path):
         """Добавить новый товар"""
+        if not article or not article.strip():
+            article = ProductQueries.generate_unique_article()
+
         query = """
             INSERT INTO products
             (article, name, unit_of_measurement, price, provider, category,
@@ -140,6 +165,12 @@ class ProductQueries:
     def update_product(product_id, article, name, unit, price, supplier,
                       category, discount, quantity, description, photo_path):
         """Обновить товар"""
+        # Проверяем уникальность артикула (исключая текущий товар)
+        check_query = "SELECT COUNT(*) as count FROM products WHERE article = %s AND id != %s"
+        result = db.execute_one(check_query, (article, product_id))
+        if result and result['count'] > 0:
+            raise Exception(f"Артикул {article} уже используется другим товаром!")
+
         query = """
             UPDATE products SET
                 article = %s,
@@ -212,11 +243,31 @@ class OrderQueries:
     """SQL запросы для работы с заказами"""
 
     @staticmethod
+    def generate_unique_order_article():
+        """Генерация уникального артикула для заказа"""
+        while True:
+            # Генерируем артикул формата: B320R5, G432E4, 1 (буква, 3 цифры, буква, цифра, запятая, пробел, цифра)
+            part1 = random.choice(string.ascii_uppercase)
+            part2 = ''.join(random.choices(string.digits, k=3))
+            part3 = random.choice(string.ascii_uppercase)
+            part4 = random.choice(string.digits)
+            part5 = random.choice(string.digits)
+            article = f"{part1}{part2}{part3}{part4}, {part5}"
+
+            # Проверяем уникальность
+            check_query = 'SELECT COUNT(*) as count FROM "order" WHERE article = %s'
+            result = db.execute_one(check_query, (article,))
+
+            if result and result['count'] == 0:
+                return article
+
+    @staticmethod
     def get_all_orders():
         """Получить все заказы"""
         query = """
             SELECT
                 o.id as order_id,
+                o.article,
                 o.recipient_code,
                 o.created_at as order_date,
                 o.delivered_at as delivery_date,
@@ -241,6 +292,7 @@ class OrderQueries:
         query = """
             SELECT
                 o.id as order_id,
+                o.article,
                 o.user_id,
                 o.pick_up_id as pickup_point_id,
                 o.created_at as order_date,
@@ -256,25 +308,42 @@ class OrderQueries:
         return db.execute_one(query, (order_id,))
 
     @staticmethod
-    def add_order(user_id, pickup_point_id, created_at, delivered_at,
+    def add_order(article, user_id, pickup_point_id, created_at, delivered_at,
                  client_name, recipient_code, status):
         """Добавить новый заказ"""
+        # Если артикул не указан или пустой, генерируем новый
+        if not article or not article.strip():
+            article = OrderQueries.generate_unique_order_article()
+        else:
+            # Проверяем уникальность указанного артикула
+            check_query = 'SELECT COUNT(*) as count FROM "order" WHERE article = %s'
+            result = db.execute_one(check_query, (article,))
+            if result and result['count'] > 0:
+                raise Exception(f"Артикул заказа {article} уже существует!")
+
         query = """
             INSERT INTO "order"
-            (user_id, pick_up_id, created_at, delivered_at, full_name, recipient_code, status)
-            VALUES (%s, %s, %s, %s, %s, %s, %s)
+            (article, user_id, pick_up_id, created_at, delivered_at, full_name, recipient_code, status)
+            VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
             RETURNING id
         """
-        result = db.execute_one(query, (user_id, pickup_point_id, created_at, delivered_at,
+        result = db.execute_one(query, (article, user_id, pickup_point_id, created_at, delivered_at,
                                        client_name, recipient_code, status))
         return result['id'] if result else None
 
     @staticmethod
-    def update_order(order_id, pickup_point_id, created_at, delivered_at,
+    def update_order(order_id, article, pickup_point_id, created_at, delivered_at,
                     client_name, recipient_code, status):
         """Обновить заказ"""
+        # Проверяем уникальность артикула (исключая текущий заказ)
+        check_query = 'SELECT COUNT(*) as count FROM "order" WHERE article = %s AND id != %s'
+        result = db.execute_one(check_query, (article, order_id))
+        if result and result['count'] > 0:
+            raise Exception(f"Артикул заказа {article} уже используется другим заказом!")
+
         query = """
             UPDATE "order" SET
+                article = %s,
                 pick_up_id = %s,
                 created_at = %s,
                 delivered_at = %s,
@@ -283,7 +352,7 @@ class OrderQueries:
                 status = %s
             WHERE id = %s
         """
-        return db.execute_query(query, (pickup_point_id, created_at, delivered_at,
+        return db.execute_query(query, (article, pickup_point_id, created_at, delivered_at,
                                        client_name, recipient_code, status, order_id),
                                fetch=False)
 
