@@ -64,6 +64,7 @@ class LoginWindow(QWidget):
         login_label.setStyleSheet("font-family: Times New Roman; font-size: 14px;")
         self.login_input = QLineEdit()
         self.login_input.setPlaceholderText("Введите логин")
+        self.login_input.setText("94d5ous@gmail.com")
         self.login_input.setStyleSheet("font-family: Times New Roman; font-size: 14px;")
         self.login_input.setMinimumHeight(35)
 
@@ -76,6 +77,7 @@ class LoginWindow(QWidget):
         password_label.setStyleSheet("font-family: Times New Roman; font-size: 14px;")
         self.password_input = QLineEdit()
         self.password_input.setPlaceholderText("Введите пароль")
+        self.password_input.setText("uzWC67")
         self.password_input.setStyleSheet("font-family: Times New Roman; font-size: 14px;")
         self.password_input.setEchoMode(QLineEdit.EchoMode.Password)
         self.password_input.setMinimumHeight(35)
