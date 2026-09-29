@@ -7,6 +7,26 @@ from database.connection import db
 
 def main():
     app = QApplication(sys.argv)
+    app.setStyleSheet("""
+    QWidget {
+        background-color: #FFFFFF;
+        color: #000000;
+    }
+    QLineEdit, QTextEdit, QPlainTextEdit,
+    QComboBox, QSpinBox, QDoubleSpinBox {
+        background-color: #FFFFFF;
+        color: #000000;
+        border: 1px solid #CCCCCC;
+        border-radius: 3px;
+        padding: 3px;
+    }
+    QComboBox QAbstractItemView {
+        background-color: #FFFFFF;
+        color: #000000;
+        selection-background-color: #E0FFE0;
+        selection-color: #000000;
+    }
+""")
     app.setApplicationName('Магазин обуви')
     app.setOrganizationName('ShoeStore')
 
