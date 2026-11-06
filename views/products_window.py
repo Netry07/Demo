@@ -19,6 +19,9 @@ from PyQt6.QtGui import QIcon, QPixmap
 from database.queries import ProductQueries
 from views.orders_window import OrdersWindow
 
+# Порог количества пар: «много», если пар больше этого значения
+MANY_THRESHOLD = 5
+
 SCROLLBAR_STYLE = """
 QScrollBar:vertical {
     background: transparent;
@@ -230,7 +233,7 @@ class ProductCard(QFrame):
 
         # --- КОЛИЧЕСТВО (Пункт 3) ---
         qty = self.product.get("quantity_in_stock", 0)
-        stock_label = "много" if qty > 5 else "мало"
+        stock_label = "много" if qty > MANY_THRESHOLD else "мало"
         lbl_qty = QLabel(f"Количество на складе: {qty} ({stock_label})")
         lbl_qty.setStyleSheet("font-family: Times New Roman; background-color: transparent;")
 
