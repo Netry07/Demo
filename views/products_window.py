@@ -19,6 +19,9 @@ from PyQt6.QtGui import QIcon, QPixmap
 from database.queries import ProductQueries
 from views.orders_window import OrdersWindow
 
+# Порог количества пар: «много», если пар больше этого значения
+MANY_THRESHOLD = 5
+
 SCROLLBAR_STYLE = """
 QScrollBar:vertical {
     background: transparent;
