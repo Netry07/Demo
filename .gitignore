@@ -1,5 +1,23 @@
-.venv
-venv
+# Python
+__pycache__/
+*.py[cod]
+.pytest_cache/
+
+# Виртуальные окружения
+venv/
+.venv/
+env/
+
+# Среды разработки
+.idea/
+.vscode/
+.qtcreator/
+
+# Результаты сборки
+build/
+dist/
+
+# Локальные настройки и секреты
+config.ini
 .env
-.pytest_cache
-__pycache__
+*.log
