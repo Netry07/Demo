@@ -9,6 +9,7 @@ from PyQt6.QtWidgets import (
 )
 from PyQt6.QtCore import Qt
 from PyQt6.QtGui import QPixmap, QIcon
+from config import DEV_CONFIG
 from database.queries import UserQueries
 from views.products_window import ProductsWindow
 
@@ -64,7 +65,7 @@ class LoginWindow(QWidget):
         login_label.setStyleSheet("font-family: Times New Roman; font-size: 14px;")
         self.login_input = QLineEdit()
         self.login_input.setPlaceholderText("Введите логин")
-        self.login_input.setText("94d5ous@gmail.com")
+        self.login_input.setText(DEV_CONFIG['login'])
         self.login_input.setStyleSheet("font-family: Times New Roman; font-size: 14px;")
         self.login_input.setMinimumHeight(35)
 
@@ -77,7 +78,7 @@ class LoginWindow(QWidget):
         password_label.setStyleSheet("font-family: Times New Roman; font-size: 14px;")
         self.password_input = QLineEdit()
         self.password_input.setPlaceholderText("Введите пароль")
-        self.password_input.setText("uzWC67")
+        self.password_input.setText(DEV_CONFIG['password'])
         self.password_input.setStyleSheet("font-family: Times New Roman; font-size: 14px;")
         self.password_input.setEchoMode(QLineEdit.EchoMode.Password)
         self.password_input.setMinimumHeight(35)
