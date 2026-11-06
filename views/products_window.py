@@ -233,7 +233,7 @@ class ProductCard(QFrame):
 
         # --- КОЛИЧЕСТВО (Пункт 3) ---
         qty = self.product.get("quantity_in_stock", 0)
-        stock_label = "много" if qty > 5 else "мало"
+        stock_label = "много" if qty > MANY_THRESHOLD else "мало"
         lbl_qty = QLabel(f"Количество на складе: {qty} ({stock_label})")
         lbl_qty.setStyleSheet("font-family: Times New Roman; background-color: transparent;")
 
