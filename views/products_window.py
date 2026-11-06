@@ -461,7 +461,12 @@ class ProductsWindow(QMainWindow):
             self.filtered_products = self.all_products.copy()
             self.display_products()
         except Exception as e:
-            QMessageBox.critical(self, "Ошибка", f"Ошибка загрузки товаров:\n{str(e)}")
+            QMessageBox.critical(
+                self,
+                "Ошибка",
+                f"Не удалось загрузить список товаров.\n\nПричина: {str(e)}\n\n"
+                "Проверьте, что PostgreSQL запущен, а параметры в config.ini указаны верно.",
+            )
 
     def load_suppliers(self):
         try:
