@@ -40,3 +40,13 @@
 - `excel_data/` — исходные данные для импорта
 - `docs/` — ER-диаграмма
 
+## ER-диаграмма базы данных
+
+Диаграмма находится в файле `docs/er_diagram.pdf` (исходник для Graphviz — `docs/er_diagram.dot`).
+Основные таблицы:
+
+- `users` — пользователи и их роли;
+- `products` — каталог товаров;
+- `pickup_points` — пункты выдачи;
+- `order` — заказы (связаны с `users` и `pickup_points`);
+- `order_items` — позиции заказов (связывают `order` и `products`).
