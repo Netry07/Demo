@@ -282,7 +282,7 @@ class ProductsWindow(QMainWindow):
 
     def init_ui(self):
         """Инициализация интерфейса"""
-        self.setWindowTitle(f'Список товаров - {self.current_user["full_name"]}')
+        self.setWindowTitle(f'Каталог обуви - {self.current_user["full_name"]}')
         self.setMinimumSize(1000, 700)
         self.setWindowIcon(QIcon("resources/images/icon.ico"))
 
