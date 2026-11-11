@@ -52,7 +52,8 @@ def main():
             f'Проверьте:\n'
             f'1. PostgreSQL запущен\n'
             f'2. База данных "shop" существует\n'
-            f'3. Логин и пароль в config.py правильные'
+            f'3. Логин и пароль в файле config.ini правильные\n'
+            f'(если файла нет, выполните: cp config.ini.example config.ini)'
         )
         sys.exit(1)
 
