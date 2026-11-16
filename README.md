@@ -50,3 +50,38 @@
 - `pickup_points` — пункты выдачи;
 - `order` — заказы (связаны с `users` и `pickup_points`);
 - `order_items` — позиции заказов (связывают `order` и `products`).
+
+## Запуск PostgreSQL через Docker Compose
+
+### Требования
+Docker Engine и плагин Docker Compose v2 (`docker --version`, `docker compose version`).
+
+### Подготовка
+1. Скопировать шаблон: `cp .env.example .env`
+2. В `.env` указать собственный локальный пароль в `POSTGRES_PASSWORD`. Файл `.env` в Git не добавляется.
+
+### Запуск
+
+docker compose up --build -d
+docker compose ps -a
+docker compose logs --tail=40 db-check
+
+Сервис `db` должен быть в состоянии healthy, `db-check` завершается с кодом 0 (одноразовая проверка).
+
+### Импорт базы данных
+
+docker compose cp database/shoe_store.sql db:/tmp/shoe_store.sql
+docker compose exec db psql -v ON_ERROR_STOP=1 -U shoe_user -d shoe_store -f /tmp/shoe_store.sql
+docker compose run --rm db-check
+
+### Подключение приложения
+В локальном `config.ini` (в Git не добавляется): `host = localhost`, `port = 5433`, `name = shoe_store`, `user = shoe_user`, пароль из `.env`.
+Внутри Compose сервис `db-check` подключается к `db:5432`.
+
+### Проверка и остановка
+
+docker compose exec db pg_isready -U shoe_user -d shoe_store
+docker compose stop
+docker compose start
+
+Команду `docker compose down -v` не использовать: она удаляет данные.
