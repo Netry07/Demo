@@ -25,7 +25,7 @@ for attempt in range(1, 11):
                     AND table_type = 'BASE TABLE'
                 """)
                 table_count = cursor.fetchone()[0]
-        print(f"OK-TEST: база={database_name}; таблиц={table_count}", flush=True)
+        print(f"OK: база={database_name}; таблиц={table_count}", flush=True)
         sys.exit(0)
     except psycopg2.OperationalError as error:
         print(f"Попытка {attempt}/10: {error}", flush=True)
