@@ -85,3 +85,39 @@ docker compose stop
 docker compose start
 
 Команду `docker compose down -v` не использовать: она удаляет данные.
+
+## Постоянное хранение и сети
+
+**Том.** Данные PostgreSQL хранятся в именованном томе `db_data` (в Docker он называется `<проект>_db_data`, например `demo_db_data`), смонтированном в `/var/lib/postgresql/data`. Том переживает `docker compose down` и пересоздание контейнера.
+
+**Резервная копия** (каталог `backups/` исключён из Git):
+
+```bash
+mkdir -p backups
+docker compose exec db pg_dump -U shoe_user -d shoe_store -f /tmp/shoe_store_backup.sql
+docker compose cp db:/tmp/shoe_store_backup.sql ./backups/shoe_store_backup.sql
+```
+
+**Восстановление** (в пустую базу):
+
+```bash
+docker compose cp ./backups/shoe_store_backup.sql db:/tmp/restore.sql
+docker compose exec db psql -v ON_ERROR_STOP=1 -U shoe_user -d shoe_store -f /tmp/restore.sql
+```
+
+**Запуск и проверка:**
+
+```bash
+docker compose up --build -d
+docker compose ps
+docker compose run --rm db-check
+```
+
+**Сетевые адреса.**
+
+| Откуда | Адрес |
+| --- | --- |
+| Приложение на хосте | `localhost:5433` (опубликован только на `127.0.0.1`) |
+| Контейнеры в сети `shoe-backend` | `db:5432` |
+
+> **Предупреждение.** Команда `docker compose down -v` удаляет именованные тома проекта вместе с данными БД. Не выполняйте её без свежей резервной копии.

@@ -21,3 +21,4 @@ dist/
 config.ini
 .env
 *.log
+backups/
