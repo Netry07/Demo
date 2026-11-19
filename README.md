@@ -121,3 +121,11 @@ docker compose run --rm db-check
 | Контейнеры в сети `shoe-backend` | `db:5432` |
 
 > **Предупреждение.** Команда `docker compose down -v` удаляет именованные тома проекта вместе с данными БД. Не выполняйте её без свежей резервной копии.
+
+## Сборка приложения
+
+Сборка PyInstaller (onedir) выполняется командой:
+
+    python -m PyInstaller --noconfirm --clean ShoeStore.spec
+
+Результат — каталог `dist/ShoeStore`. Установка и запуск описаны в `INSTALL.md`.

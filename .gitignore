@@ -22,3 +22,7 @@ config.ini
 .env
 *.log
 backups/
+build/
+dist/
+.venv/
+*.zip

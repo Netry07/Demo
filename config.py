@@ -1,8 +1,22 @@
-"""Настройки приложения. Параметры подключения к БД читаются из config.ini."""
 import configparser
 import os
+import sys
 
-CONFIG_FILE = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'config.ini')
+# Каталог упакованных ресурсов: в обычном режиме это каталог проекта,
+# в сборке PyInstaller (onedir) модуль лежит в _internal, куда копируются ресурсы.
+BUNDLE_DIR = os.path.dirname(os.path.abspath(__file__))
+
+def resource_path(relative_path):
+    """Абсолютный путь к ресурсу, заданному относительно корня проекта (resources/...)."""
+    return os.path.join(BUNDLE_DIR, *relative_path.split('/'))
+# Каталог внешней конфигурации: рядом с исполняемым файлом в сборке
+# и рядом с config.py при запуске из исходников.
+if getattr(sys, 'frozen', False):
+    EXTERNAL_DIR = os.path.dirname(os.path.abspath(sys.executable))
+else:
+    EXTERNAL_DIR = BUNDLE_DIR
+
+CONFIG_FILE = os.path.join(EXTERNAL_DIR, 'config.ini')
 
 _parser = configparser.ConfigParser(interpolation=None)
 if not _parser.read(CONFIG_FILE, encoding='utf-8'):
@@ -43,7 +57,7 @@ COLORS = {
 }
 
 RESOURCES = {
-    'products_folder': 'resources/products/',
-    'placeholder_image': 'resources/images/picture.png',
-    'logo': 'resources/images/icon.ico',
+    'products_folder': os.path.join(BUNDLE_DIR, 'resources', 'products', ''),
+    'placeholder_image': os.path.join(BUNDLE_DIR, 'resources', 'images', 'picture.png'),
+    'logo': os.path.join(BUNDLE_DIR, 'resources', 'images', 'icon.ico'),
 }

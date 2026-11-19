@@ -1,11 +1,16 @@
+import os
 import sys
 from PyQt6.QtWidgets import QApplication, QMessageBox
 from PyQt6.QtGui import QIcon
+from config import BUNDLE_DIR
 from views.login_window import LoginWindow
 from database.connection import db
 
 
 def main():
+    # Относительные пути resources/... считаются от каталога ресурсов,
+    # а не от текущего каталога, из которого запущена программа
+    os.chdir(BUNDLE_DIR)
     app = QApplication(sys.argv)
     app.setStyleSheet("""
     QWidget {
